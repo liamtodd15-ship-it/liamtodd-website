@@ -1,6 +1,8 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: liamtodd15/ship-it
   branch: main
+  auth_scope: repo
 
 media_folder: "images"
 
@@ -15,7 +17,6 @@ collections:
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Excerpt", name: "excerpt", widget: "text" }
       - { label: "Body", name: "body", widget: "markdown" }
-
   - name: "food"
     label: "Food"
     folder: "posts/food"
@@ -26,7 +27,6 @@ collections:
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Excerpt", name: "excerpt", widget: "text" }
       - { label: "Body", name: "body", widget: "markdown" }
-
   - name: "travel"
     label: "Travel"
     folder: "posts/travel"
