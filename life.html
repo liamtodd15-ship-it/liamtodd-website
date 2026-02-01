@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life - Liam Todd</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            transition: background-color 0.3s, color 0.3s;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        body.dark-mode { background: #1a1a1a; color: #e0e0e0; }
+
+        .theme-toggle {
+            position: fixed; top: 20px; right: 20px;
+            width: 40px; height: 40px;
+            border: 1px solid #e0e0e0;
+            background: transparent; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; transition: border-color 0.3s; z-index: 1000;
+        }
+        body.dark-mode .theme-toggle { border-color: #404040; }
+        .theme-toggle:hover { border-color: #999; }
+
+        header { margin-bottom: 60px; max-width: 650px; }
+
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 20px; letter-spacing: -0.5px; }
+        h1 a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
+        h1 a:hover { color: #666; }
+        body.dark-mode h1 a { color: #e0e0e0; }
+        body.dark-mode h1 a:hover { color: #999; }
+
+        h2 {
+            font-size: 20px; font-weight: 600; margin-bottom: 30px;
+            color: #1a1a1a; padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0; display: inline-block;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        h2:hover { color: #000; }
+        body.dark-mode h2 { color: #e0e0e0; border-bottom-color: #404040; }
+        body.dark-mode h2:hover { color: #fff; }
+
+        nav { margin-top: 30px; }
+        nav a {
+            color: #666; text-decoration: none; margin-right: 20px; font-size: 15px;
+            transition: color 0.2s, border-bottom-color 0.2s;
+            border-bottom: 1px solid transparent; padding-bottom: 2px;
+        }
+        nav a:hover, nav a.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+        body.dark-mode nav a { color: #999; }
+        body.dark-mode nav a:hover, body.dark-mode nav a.active { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+
+        .content { margin-bottom: 80px; max-width: 650px; }
+
+        .post-list { list-style: none; }
+        .post-item { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid #f0f0f0; }
+        body.dark-mode .post-item { border-bottom-color: #2a2a2a; }
+        .post-item:last-child { border-bottom: none; }
+
+        .post-date { font-size: 14px; color: #999; margin-bottom: 6px; }
+        body.dark-mode .post-date { color: #666; }
+
+        .post-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+        .post-title a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
+        .post-title a:hover { color: #0066cc; }
+        body.dark-mode .post-title a { color: #e0e0e0; }
+        body.dark-mode .post-title a:hover { color: #4da6ff; }
+
+        .post-excerpt { font-size: 15px; color: #666; line-height: 1.6; }
+        body.dark-mode .post-excerpt { color: #999; }
+
+        .loading { color: #999; font-size: 15px; padding: 20px 0; }
+
+        footer {
+            margin-top: 100px; padding-top: 30px;
+            border-top: 1px solid #f0f0f0; font-size: 14px; color: #999; max-width: 650px;
+        }
+        body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
+
+        @media (max-width: 600px) {
+            body { padding: 40px 20px; }
+            .theme-toggle { top: 10px; right: 10px; }
+            h1 { font-size: 24px; }
+            nav a { display: inline-block; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="theme-icon">☀️</span>
+    </button>
+
+    <header>
+        <h1><a href="index.html">Liam Todd</a></h1>
+        <nav>
+            <a href="index.html">About</a>
+            <a href="life.html" class="active">Life</a>
+            <a href="food.html">Food</a>
+            <a href="travel.html">Travel</a>
+            <a href="bookshelf.html">Bookshelf</a>
+        </nav>
+    </header>
+
+    <div class="content">
+        <h2>Life</h2>
+        <ul class="post-list" id="post-list">
+            <li class="loading">Loading posts...</li>
+        </ul>
+    </div>
+
+    <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
+
+    <script>
+        // Fetch posts from the posts/life folder
+        async function loadPosts() {
+            var list = document.getElementById('post-list');
+            try {
+                var res = await fetch('/posts/life/');
+                var html = await res.text();
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                var links = doc.querySelectorAll('a[href$=".md"]');
+                var posts = [];
+
+                for (var i = 0; i < links.length; i++) {
+                    var href = links[i].getAttribute('href');
+                    var postRes = await fetch('/posts/life/' + href);
+                    var content = await postRes.text();
+                    var post = parseFrontmatter(content);
+                    post.file = href.replace('.md', '.html');
+                    posts.push(post);
+                }
+
+                // Sort by date, newest first
+                posts.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+                if (posts.length === 0) {
+                    list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
+                    return;
+                }
+
+                list.innerHTML = posts.map(function(post) {
+                    var d = new Date(post.date);
+                    var dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                    return '<li class="post-item">' +
+                        '<div class="post-date">' + dateStr + '</div>' +
+                        '<div class="post-title"><a href="' + post.file + '">' + post.title + '</a></div>' +
+                        '<div class="post-excerpt">' + post.excerpt + '</div>' +
+                    '</li>';
+                }).join('');
+
+            } catch(e) {
+                list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
+            }
+        }
+
+        function parseFrontmatter(content) {
+            var lines = content.split('\n');
+            var data = { title: '', date: '', excerpt: '', body: '' };
+            var inFrontmatter = false;
+            var bodyLines = [];
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (line === '---') {
+                    if (!inFrontmatter) { inFrontmatter = true; continue; }
+                    else { inFrontmatter = false; continue; }
+                }
+                if (inFrontmatter) {
+                    if (line.startsWith('title:')) data.title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
+                    if (line.startsWith('date:')) data.date = line.replace('date:', '').trim();
+                    if (line.startsWith('excerpt:')) data.excerpt = line.replace('excerpt:', '').trim().replace(/^["']|["']$/g, '');
+                } else {
+                    bodyLines.push(lines[i]);
+                }
+            }
+            data.body = bodyLines.join('\n').trim();
+            return data;
+        }
+
+        function toggleTheme() {
+            var body = document.body;
+            var icon = document.getElementById('theme-icon');
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) { icon.textContent = '🌙'; localStorage.setItem('theme', 'dark'); }
+            else { icon.textContent = '☀️'; localStorage.setItem('theme', 'light'); }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').textContent = '🌙';
+            }
+            loadPosts();
+        });
+    </script>
+</body>
+</html>

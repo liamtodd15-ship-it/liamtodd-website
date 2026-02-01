@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liam Todd</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            transition: background-color 0.3s, color 0.3s;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e0e0e0;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: border-color 0.3s;
+            z-index: 1000;
+        }
+
+        body.dark-mode .theme-toggle { border-color: #404040; }
+        .theme-toggle:hover { border-color: #999; }
+
+        header { margin-bottom: 60px; max-width: 650px; }
+
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 20px; letter-spacing: -0.5px; }
+        h1 a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
+        h1 a:hover { color: #666; }
+        body.dark-mode h1 a { color: #e0e0e0; }
+        body.dark-mode h1 a:hover { color: #999; }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: inline-block;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        h2:hover { color: #000; }
+        body.dark-mode h2 { color: #e0e0e0; border-bottom-color: #404040; }
+        body.dark-mode h2:hover { color: #fff; }
+
+        nav { margin-top: 30px; }
+        nav a {
+            color: #666;
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 15px;
+            transition: color 0.2s, border-bottom-color 0.2s;
+            border-bottom: 1px solid transparent;
+            padding-bottom: 2px;
+        }
+        nav a:hover, nav a.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+        body.dark-mode nav a { color: #999; }
+        body.dark-mode nav a:hover, body.dark-mode nav a.active { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+
+        .top-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        .about-col .bio {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        body.dark-mode .about-col .bio { color: #b0b0b0; }
+
+        .writing-col .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .writing-col .tab-link {
+            display: block;
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: color 0.2s, padding-left 0.2s;
+        }
+
+        .writing-col .tab-link:first-child {
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .writing-col .tab-link:hover {
+            color: #0066cc;
+            padding-left: 6px;
+        }
+
+        body.dark-mode .writing-col .tab-link { color: #b0b0b0; border-bottom-color: #2a2a2a; }
+        body.dark-mode .writing-col .tab-link:first-child { border-top-color: #2a2a2a; }
+        body.dark-mode .writing-col .tab-link:hover { color: #4da6ff; }
+
+        .writing-col .tab-label {
+            font-size: 13px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .writing-col .tab-desc {
+            font-size: 14px;
+            color: #999;
+        }
+
+        body.dark-mode .writing-col .tab-label { color: #666; }
+        body.dark-mode .writing-col .tab-desc { color: #666; }
+
+        .bookshelf-section { margin-top: 40px; }
+
+        .year-section { margin-bottom: 60px; }
+        .year-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: inline-block;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .year-title:hover { color: #000; }
+        body.dark-mode .year-title { color: #e0e0e0; border-bottom-color: #404040; }
+        body.dark-mode .year-title:hover { color: #fff; }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        .book-item { cursor: pointer; transition: transform 0.2s; }
+        .book-item:hover { transform: translateY(-5px); }
+
+        .book-cover-wrap {
+            width: 100%;
+            height: 210px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark-mode .book-cover-wrap { box-shadow: 0 2px 8px rgba(0,0,0,0.5); background: #2a2a2a; }
+
+        .book-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+        .book-cover-wrap .placeholder {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            padding: 15px;
+            line-height: 1.4;
+        }
+        body.dark-mode .book-cover-wrap .placeholder { color: #666; }
+
+        .book-title { font-size: 13px; margin-top: 10px; color: #333; line-height: 1.4; }
+        body.dark-mode .book-title { color: #b0b0b0; }
+        .book-author { font-size: 12px; color: #999; margin-top: 4px; }
+        body.dark-mode .book-author { color: #666; }
+
+        footer {
+            margin-top: 100px;
+            padding-top: 30px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #999;
+            max-width: 650px;
+        }
+        body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
+
+        @media (max-width: 768px) {
+            .top-section { grid-template-columns: 1fr; gap: 40px; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 40px 20px; }
+            .theme-toggle { top: 10px; right: 10px; }
+            h1 { font-size: 24px; }
+            nav a { display: inline-block; margin-bottom: 10px; }
+            .book-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
+            .book-cover-wrap { height: 165px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="theme-icon">☀️</span>
+    </button>
+
+    <header>
+        <h1><a href="index.html">Liam Todd</a></h1>
+        <nav>
+            <a href="index.html" class="active">About</a>
+            <a href="life.html">Life</a>
+            <a href="food.html">Food</a>
+            <a href="travel.html">Travel</a>
+            <a href="bookshelf.html">Bookshelf</a>
+        </nav>
+    </header>
+
+    <div class="top-section">
+        <div class="about-col">
+            <h2>About</h2>
+            <p class="bio">
+                Used to sell clothes, attempted to sell wine, finally settled into a Finance career and started studying towards the CFA certification.
+            </p>
+            <p class="bio">
+                Still thinking about selling clothes.
+            </p>
+        </div>
+
+        <div class="writing-col">
+            <h2>Writing</h2>
+            <div class="tabs">
+                <a href="life.html" class="tab-link">
+                    <div class="tab-label">Life</div>
+                    <div class="tab-desc">Thoughts on everyday life and building in public</div>
+                </a>
+                <a href="food.html" class="tab-link">
+                    <div class="tab-label">Food</div>
+                    <div class="tab-desc">Recipes, coffee, and culinary adventures</div>
+                </a>
+                <a href="travel.html" class="tab-link">
+                    <div class="tab-label">Travel</div>
+                    <div class="tab-desc">Stories from around the UK and beyond</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bookshelf-section">
+        <h2>Bookshelf</h2>
+        <div id="bookshelf-container"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Liam Todd. All rights reserved. Book covers via <a href="https://openlibrary.org" style="color:#0066cc;">Open Library</a></p>
+    </footer>
+
+    <script>
+        var books = {
+            "2025": [
+                { title: "Zero to One", author: "Peter Thiel", img: "images/zero-to-one.jpg" },
+                { title: "Our Lives in Their Portfolios", author: "Brett Christophers", img: "images/our-lives-in-their-portfolis.jpg" },
+                { title: "Fear and Loathing in Las Vegas", author: "Hunter S. Thompson", img: "images/fear-and-loathing-in-lasvegas.jpg" },
+                { title: "A Brief History of Time", author: "Stephen Hawking", img: "images/a-brief-history-of-time.jpg" },
+                { title: "The Adventures of Tom Sawyer", author: "Mark Twain", img: "images/adventures-of-tom-sawyer.jpg" },
+                { title: "Feel-Good Productivity", author: "Ali Abdaal", img: "images/feel-good-productivity.jpg" },
+                { title: "Tuesdays with Morrie", author: "Mitch Albom", img: "images/tuesdays-with-morrie.jpg" },
+                { title: "The Anxious Generation", author: "Jonathan Haidt", img: "images/anxious-generation.jpg" },
+                { title: "Never Split the Difference", author: "Chris Voss", img: "images/never-split-the-difference.jpg" },
+                { title: "Man's Search for Meaning", author: "Viktor E. Frankl", img: "images/mans-search-for-meaning.jpg" },
+                { title: "How the World Really Works", author: "Vaclav Smil", img: "images/how-the-world-really-works.jpg" },
+                { title: "Down and Out in Paris and London", author: "George Orwell", img: "images/down-and-out-in-paris-and-london.jpg" }
+            ],
+            "2024": [
+                { title: "The Defining Decade", author: "Meg Jay", img: "images/the-defining-decade.jpg" },
+                { title: "The Happiness Advantage", author: "Shawn Achor", img: "images/the-happiness-advantage.jpg" },
+                { title: "Giovanni's Room", author: "James Baldwin", img: "images/giovannis-room.jpg" },
+                { title: "A Waiter in Paris", author: "Edward Chisholm", img: "images/a-waiter-in-paris.jpg" },
+                { title: "Someday Is Today", author: "Matthew Dicks", img: "images/someday-is-today.jpg" },
+                { title: "More Money Than God", author: "Sebastian Mallaby", img: "images/more-money-than-good.jpg" },
+                { title: "The Power of Now", author: "Eckhart Tolle", img: "images/the-power-of-now.jpg" },
+                { title: "Liar's Poker", author: "Michael Lewis", img: "images/liars-poker.jpg" },
+                { title: "The Big Short", author: "Michael Lewis", img: "images/the-big-short.jpg" },
+                { title: "The Go-Giver", author: "Bob Burg", img: "images/the-go-giver.jpg" }
+            ],
+            "2023": [
+                { title: "Books v. Cigarettes", author: "George Orwell", img: "images/books-vs-cigarettes.jpg" },
+                { title: "Four Thousand Weeks", author: "Oliver Burkeman", img: "images/four-thousand-weeks.jpg" },
+                { title: "The Nasty Bits", author: "Anthony Bourdain", img: "images/the-nasty-bits.jpg" },
+                { title: "Into the Wild", author: "Jon Krakauer", img: "images/into-the-wild.jpg" },
+                { title: "A New Earth", author: "Eckhart Tolle", img: "images/a-new-earth.jpg" },
+                { title: "Secrets and Other Stories", author: "Bernard MacLaverty", img: "images/secrets-and-other-stories.jpg" },
+                { title: "The Long and the Short of It", author: "John Kay", img: "images/long-and-the-short-of-it.jpg" },
+                { title: "Diary of an Oxygen Thief", author: "Anonymous", img: "images/diary-of-an-oxygen-thief.jpg" },
+                { title: "Who Rules the World?", author: "Noam Chomsky", img: "images/who-rules-the-world.jpg" },
+                { title: "A Cook's Tour", author: "Anthony Bourdain", img: "images/a-cooks-tour.jpg" },
+                { title: "Warren Buffett and the Interpretation of Financial Statements", author: "Mary Buffett", img: "images/warren-buffet.jpg" },
+                { title: "Train Dreams", author: "Denis Johnson", img: "images/train-dream.jpg" },
+                { title: "Flash Boys", author: "Michael Lewis", img: "images/flash-boys.jpg" },
+                { title: "The Five People You Meet in Heaven", author: "Mitch Albom", img: "images/five-people-you-meet-in-heaven.jpg" },
+                { title: "The Rational Optimist", author: "Matt Ridley", img: "images/the-rational-optimist.jpg" },
+                { title: "The Almanack of Naval Ravikant", author: "Eric Jorgenson", img: "images/naval-ravikant.jpg" }
+            ],
+            "2022": [
+                { title: "How Numbers Work", author: "New Scientist", img: "images/how-numbers-work.jpg" },
+                { title: "The Origin of (almost) Everything", author: "Graham Lawton", img: "images/the-origin-of-everything.jpg" },
+                { title: "Animal Farm", author: "George Orwell", img: "images/animal-farm.jpg" },
+                { title: "The Culture Code", author: "Daniel Coyle", img: "images/the-culture-code.jpg" },
+                { title: "Kitchen Confidential", author: "Anthony Bourdain", img: "images/kitchden-confidential.jpg" },
+                { title: "Freakonomics", author: "Steven D. Levitt", img: "images/freakonomics.jpg" },
+                { title: "How to Talk to Anyone", author: "Leil Lowndes", img: "images/how-to-talk-to-anyone.jpg" },
+                { title: "How to Lie with Statistics", author: "Darrell Huff", img: "images/how-to-lie-with-statistics.jpg" },
+                { title: "The Undercover Economist", author: "Tim Harford", img: "images/undercover-economist.jpg" },
+                { title: "Eat The Rich", author: "P.J. O'Rourke", img: "images/eat-the-rich.jpg" },
+                { title: "Snow Country", author: "Yasunari Kawabata", img: "images/snow-country.jpg" },
+                { title: "Newton", author: "Peter Ackroyd", img: "images/newton.jpg" },
+                { title: "Shoe Dog", author: "Phil Knight", img: "images/shoe-dog.jpg" },
+                { title: "Business Adventures", author: "John Brooks", img: "images/business-adventures.jpg" },
+                { title: "SuperFreakonomics", author: "Stephen J. Dubner", img: "images/superfreakonomics.jpg" },
+                { title: "The Magic of Reality", author: "Richard Dawkins", img: "images/the-magic-of-reality.jpg" },
+                { title: "A Universe from Nothing", author: "Lawrence M. Krauss", img: "images/universe-from-nothing.jpg" },
+                { title: "Sapiens", author: "Yuval Noah Harari", img: "images/sapiens.jpg" },
+                { title: "Homo Deus", author: "Yuval Noah Harari", img: "images/homo-deus.jpg" },
+                { title: "How to Thrive in the Next Economy", author: "John Thackara", img: "images/how-to-thrive-in-the-next-economy.jpg" },
+                { title: "Factfulness", author: "Hans Rosling", img: "images/factfulness.jpg" },
+                { title: "21 Lessons for the 21st Century", author: "Yuval Noah Harari", img: "images/21-lessons.jpg" },
+                { title: "Atomic Habits", author: "James Clear", img: "images/atomic-habits.jpg" },
+                { title: "Human Compatible", author: "Stuart Russell", img: "images/human-compatible.jpg" },
+                { title: "The Origin of Our Species", author: "Chris Stringer", img: "images/origin-of-our-species.jpg" }
+            ]
+        };
+
+        function renderBooks() {
+            var container = document.getElementById('bookshelf-container');
+            var html = '';
+            var years = Object.keys(books).sort(function(a, b) { return b - a; });
+
+            years.forEach(function(year) {
+                html += '<div class="year-section"><div class="year-title">' + year + '</div>';
+                html += '<div class="book-grid">';
+                books[year].forEach(function(book) {
+                    html += '<div class="book-item">';
+                    html += '<div class="book-cover-wrap">';
+                    html += '<img src="' + book.img + '" alt="' + book.title + '" loading="lazy">';
+                    html += '</div>';
+                    html += '<div class="book-title">' + book.title + '</div>';
+                    html += '<div class="book-author">' + book.author + '</div>';
+                    html += '</div>';
+                });
+                html += '</div></div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleTheme() {
+            var body = document.body;
+            var icon = document.getElementById('theme-icon');
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                icon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').textContent = '🌙';
+            }
+            renderBooks();
+        });
+    </script>
+</body>
+</html>
