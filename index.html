@@ -398,5 +398,13 @@
             renderBooks();
         });
     </script>
+
+    <!-- Netlify Identity: redirects invite/confirmation links to the CMS -->
+    <script>
+        if (window.location.hash.includes("confirmation_token") ||
+            window.location.hash.includes("access_token")) {
+            window.location.href = "/admin/" + window.location.hash;
+        }
+    </script>
 </body>
 </html>
