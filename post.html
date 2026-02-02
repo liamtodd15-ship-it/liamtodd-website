@@ -90,3 +90,105 @@
 
         @media (max-width: 600px) {
             body { padding: 40px 20px; }
+            .theme-toggle { top: 10px; right: 10px; }
+            h1 { font-size: 24px; }
+            .post-title { font-size: 26px; }
+            .post-content { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="theme-icon">☀️</span>
+    </button>
+
+    <header>
+        <h1><a href="index.html">Liam Todd</a></h1>
+        <nav>
+            <a href="index.html">About</a>
+            <a href="life.html">Life</a>
+            <a href="food.html">Food</a>
+            <a href="travel.html">Travel</a>
+            <a href="bookshelf.html">Bookshelf</a>
+        </nav>
+    </header>
+
+    <a href="#" class="back-link" id="back-link">← Back to posts</a>
+
+    <article id="post-article">
+        <div class="loading">Loading post...</div>
+    </article>
+
+    <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
+
+    <script>
+        async function loadPost() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const folder = urlParams.get('folder');
+            const slug = urlParams.get('slug');
+
+            if (!folder || !slug) {
+                document.getElementById('post-article').innerHTML = 
+                    '<p style="color:#999;">Post not found.</p>';
+                return;
+            }
+
+            // Set back link
+            const backLink = document.getElementById('back-link');
+            backLink.href = folder + '.html';
+            backLink.textContent = '← Back to ' + folder.charAt(0).toUpperCase() + folder.slice(1);
+
+            try {
+                const res = await fetch('/.netlify/functions/get-post?folder=' + folder + '&slug=' + slug);
+                const post = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('page-title').textContent = post.title + ' - Liam Todd';
+                    
+                    const dateObj = new Date(post.date);
+                    const dateStr = dateObj.toLocaleDateString('en-GB', { 
+                        day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric' 
+                    });
+
+                    document.getElementById('post-article').innerHTML = 
+                        '<div class="post-header">' +
+                            '<h2 class="post-title">' + post.title + '</h2>' +
+                            '<div class="post-date">' + dateStr + '</div>' +
+                        '</div>' +
+                        '<div class="post-content">' + post.content + '</div>';
+                } else {
+                    document.getElementById('post-article').innerHTML = 
+                        '<p style="color:#999;">Post not found.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading post:', error);
+                document.getElementById('post-article').innerHTML = 
+                    '<p style="color:#999;">Error loading post.</p>';
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) { 
+                icon.textContent = '🌙'; 
+                localStorage.setItem('theme', 'dark'); 
+            } else { 
+                icon.textContent = '☀️'; 
+                localStorage.setItem('theme', 'light'); 
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').textContent = '🌙';
+            }
+            loadPost();
+        });
+    </script>
+</body>
+</html>
