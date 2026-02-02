@@ -133,19 +133,21 @@
                 return;
             }
 
-            // Set back link
             const backLink = document.getElementById('back-link');
             backLink.href = folder + '.html';
             backLink.textContent = '← Back to ' + folder.charAt(0).toUpperCase() + folder.slice(1);
 
             try {
-                const res = await fetch('/.netlify/functions/get-post?folder=' + folder + '&slug=' + slug);
-                const post = await res.json();
+                const res = await fetch('/posts/' + folder + '/' + slug + '.md');
+                const markdown = await res.text();
 
                 if (res.ok) {
-                    document.getElementById('page-title').textContent = post.title + ' - Liam Todd';
+                    const { metadata, body } = parseFrontmatter(markdown);
+                    const htmlContent = markdownToHTML(body);
+
+                    document.getElementById('page-title').textContent = metadata.title + ' - Liam Todd';
                     
-                    const dateObj = new Date(post.date);
+                    const dateObj = new Date(metadata.date);
                     const dateStr = dateObj.toLocaleDateString('en-GB', { 
                         day: 'numeric', 
                         month: 'long', 
@@ -154,10 +156,10 @@
 
                     document.getElementById('post-article').innerHTML = 
                         '<div class="post-header">' +
-                            '<h2 class="post-title">' + post.title + '</h2>' +
+                            '<h2 class="post-title">' + metadata.title + '</h2>' +
                             '<div class="post-date">' + dateStr + '</div>' +
                         '</div>' +
-                        '<div class="post-content">' + post.content + '</div>';
+                        '<div class="post-content">' + htmlContent + '</div>';
                 } else {
                     document.getElementById('post-article').innerHTML = 
                         '<p style="color:#999;">Post not found.</p>';
@@ -167,6 +169,82 @@
                 document.getElementById('post-article').innerHTML = 
                     '<p style="color:#999;">Error loading post.</p>';
             }
+        }
+
+        function parseFrontmatter(content) {
+            const lines = content.split('\n');
+            const metadata = { title: '', date: '', excerpt: '' };
+            let inFrontmatter = false;
+            const bodyLines = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line === '---') {
+                    if (!inFrontmatter) {
+                        inFrontmatter = true;
+                        continue;
+                    } else {
+                        inFrontmatter = false;
+                        continue;
+                    }
+                }
+                
+                if (inFrontmatter) {
+                    if (line.startsWith('title:')) {
+                        metadata.title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
+                    }
+                    if (line.startsWith('date:')) {
+                        metadata.date = line.replace('date:', '').trim();
+                    }
+                    if (line.startsWith('excerpt:')) {
+                        metadata.excerpt = line.replace('excerpt:', '').trim().replace(/^["']|["']$/g, '');
+                    }
+                } else {
+                    bodyLines.push(lines[i]);
+                }
+            }
+
+            return {
+                metadata,
+                body: bodyLines.join('\n').trim()
+            };
+        }
+
+        function markdownToHTML(markdown) {
+            let html = markdown;
+
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+            // Bold
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+            
+            // Images
+            html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+            
+            // Line breaks to paragraphs
+            html = html.split('\n\n').map(para => {
+                const trimmed = para.trim();
+                if (trimmed && !trimmed.startsWith('<')) {
+                    return '<p>' + trimmed + '</p>';
+                }
+                return trimmed;
+            }).join('\n');
+
+            // Lists
+            html = html.replace(/^\- (.+)$/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*?<\/li>)/s, '<ul>$1</ul>');
+
+            return html;
         }
 
         function toggleTheme() {
