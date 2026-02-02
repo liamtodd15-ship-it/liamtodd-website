@@ -120,26 +120,12 @@
     <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
 
     <script>
+        // Fetch posts from Netlify function
         async function loadPosts() {
             var list = document.getElementById('post-list');
             try {
-                var res = await fetch('/posts/food/');
-                var html = await res.text();
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var links = doc.querySelectorAll('a[href$=".md"]');
-                var posts = [];
-
-                for (var i = 0; i < links.length; i++) {
-                    var href = links[i].getAttribute('href');
-                    var postRes = await fetch('/posts/food/' + href);
-                    var content = await postRes.text();
-                    var post = parseFrontmatter(content);
-                    post.file = href.replace('.md', '.html');
-                    posts.push(post);
-                }
-
-                posts.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+                var res = await fetch('/.netlify/functions/list-posts?folder=food');
+                var posts = await res.json();
 
                 if (posts.length === 0) {
                     list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
@@ -151,46 +137,28 @@
                     var dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
                     return '<li class="post-item">' +
                         '<div class="post-date">' + dateStr + '</div>' +
-                        '<div class="post-title"><a href="' + post.file + '">' + post.title + '</a></div>' +
+                        '<div class="post-title"><a href="post.html?folder=food&slug=' + post.file + '">' + post.title + '</a></div>' +
                         '<div class="post-excerpt">' + post.excerpt + '</div>' +
                     '</li>';
                 }).join('');
 
             } catch(e) {
+                console.error('Error loading posts:', e);
                 list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
             }
-        }
-
-        function parseFrontmatter(content) {
-            var lines = content.split('\n');
-            var data = { title: '', date: '', excerpt: '', body: '' };
-            var inFrontmatter = false;
-            var bodyLines = [];
-
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i].trim();
-                if (line === '---') {
-                    if (!inFrontmatter) { inFrontmatter = true; continue; }
-                    else { inFrontmatter = false; continue; }
-                }
-                if (inFrontmatter) {
-                    if (line.startsWith('title:')) data.title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
-                    if (line.startsWith('date:')) data.date = line.replace('date:', '').trim();
-                    if (line.startsWith('excerpt:')) data.excerpt = line.replace('excerpt:', '').trim().replace(/^["']|["']$/g, '');
-                } else {
-                    bodyLines.push(lines[i]);
-                }
-            }
-            data.body = bodyLines.join('\n').trim();
-            return data;
         }
 
         function toggleTheme() {
             var body = document.body;
             var icon = document.getElementById('theme-icon');
             body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) { icon.textContent = '🌙'; localStorage.setItem('theme', 'dark'); }
-            else { icon.textContent = '☀️'; localStorage.setItem('theme', 'light'); }
+            if (body.classList.contains('dark-mode')) { 
+                icon.textContent = '🌙'; 
+                localStorage.setItem('theme', 'dark'); 
+            } else { 
+                icon.textContent = '☀️'; 
+                localStorage.setItem('theme', 'light'); 
+            }
         }
 
         window.addEventListener('DOMContentLoaded', function() {
