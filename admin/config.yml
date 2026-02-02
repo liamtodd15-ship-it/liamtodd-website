@@ -1,8 +1,7 @@
+local_backend: true
+
 backend:
-  name: github
-  repo: liamtodd15/ship-it
-  branch: main
-  base_url: https://chimerical-starship-3948cf.netlify.app
+  name: test-repo
 
 media_folder: "images"
 
