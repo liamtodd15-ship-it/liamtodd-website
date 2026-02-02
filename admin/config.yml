@@ -2,7 +2,7 @@ backend:
   name: github
   repo: liamtodd15/ship-it
   branch: main
-  auth_scope: repo
+  base_url: https://your-proxy-url.netlify.app
 
 media_folder: "images"
 
