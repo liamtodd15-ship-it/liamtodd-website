@@ -10,9 +10,9 @@ I'm going to use this space to share thoughts about life, building projects in p
 
 Here are some things I want to write about:
 
-My daily routines
-Books I'm reading
-Projects I'm working on
-Random thoughts and observations
+-My daily routines
+-Books I'm reading
+-Projects I'm working on
+-Random thoughts and observations
 
 I'm starting this as a project to challenge myself and see where my skillset ends and my ingenuity begins, while becoming fully integrated in AI tools. This entire website is built from scratch with the help of Claude.
