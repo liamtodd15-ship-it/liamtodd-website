@@ -2,7 +2,7 @@ backend:
   name: github
   repo: liamtodd15/ship-it
   branch: main
-  base_url: https://your-proxy-url.netlify.app
+  base_url: https://chimerical-starship-3948cf.netlify.app
 
 media_folder: "images"
 
