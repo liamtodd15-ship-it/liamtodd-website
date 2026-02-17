@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liam Todd</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <style>
         * {
             margin: 0;
@@ -245,7 +246,7 @@
                 Used to sell clothes, attempted to sell wine, finally settled into a Finance career and started studying towards the CFA certification.
             </p>
             <p class="bio">
-                Still thinking about selling clothes and wine.
+                Still thinking about selling clothes.
             </p>
         </div>
 
@@ -281,7 +282,7 @@
         var books = {
             "2025": [
                 { title: "Zero to One", author: "Peter Thiel", img: "images/zero-to-one.jpg" },
-                { title: "Our Lives in Their Portfolios", author: "Brett Christophers", img: "images/ our-lives-in-their-portfolis.jpg" },
+                { title: "Our Lives in Their Portfolios", author: "Brett Christophers", img: "images/our-lives-in-their-portfolis.jpg" },
                 { title: "Fear and Loathing in Las Vegas", author: "Hunter S. Thompson", img: "images/fear-and-loathing-in-lasvegas.jpg" },
                 { title: "A Brief History of Time", author: "Stephen Hawking", img: "images/a-brief-history-of-time.jpg" },
                 { title: "The Adventures of Tom Sawyer", author: "Mark Twain", img: "images/adventures-of-tom-sawyer.jpg" },
@@ -396,6 +397,17 @@
             }
             renderBooks();
         });
+    </script>
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", function(user) {
+                if (!user) {
+                    window.netlifyIdentity.on("login", function() {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
