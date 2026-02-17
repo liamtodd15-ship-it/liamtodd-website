@@ -135,7 +135,7 @@
                     var dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
                     return '<li class="post-item">' +
                         '<div class="post-date">' + dateStr + '</div>' +
-                        '<div class="post-title"><a href="' + post.file + '">' + post.title + '</a></div>' +
+                        '<div class="post-title"><a href="post.html?folder=food&slug=' + post.file.replace('.html','') + '">' + post.title + '</a></div>' +
                         '<div class="post-excerpt">' + post.excerpt + '</div>' +
                     '</li>';
                 }).join('');

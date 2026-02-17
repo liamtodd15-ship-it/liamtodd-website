@@ -6,7 +6,6 @@
     <title id="page-title">Post - Liam Todd</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             line-height: 1.6;
@@ -17,9 +16,7 @@
             margin: 0 auto;
             padding: 60px 20px;
         }
-
         body.dark-mode { background: #1a1a1a; color: #e0e0e0; }
-
         .theme-toggle {
             position: fixed; top: 20px; right: 20px;
             width: 40px; height: 40px;
@@ -30,15 +27,12 @@
         }
         body.dark-mode .theme-toggle { border-color: #404040; }
         .theme-toggle:hover { border-color: #999; }
-
         header { margin-bottom: 60px; max-width: 650px; }
-
         h1 { font-size: 28px; font-weight: 600; margin-bottom: 20px; letter-spacing: -0.5px; }
         h1 a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
         h1 a:hover { color: #666; }
         body.dark-mode h1 a { color: #e0e0e0; }
         body.dark-mode h1 a:hover { color: #999; }
-
         nav { margin-top: 30px; }
         nav a {
             color: #666; text-decoration: none; margin-right: 20px; font-size: 15px;
@@ -48,7 +42,6 @@
         nav a:hover { color: #1a1a1a; border-bottom-color: #1a1a1a; }
         body.dark-mode nav a { color: #999; }
         body.dark-mode nav a:hover { color: #e0e0e0; border-bottom-color: #e0e0e0; }
-
         .back-link {
             display: inline-block;
             color: #0066cc;
@@ -58,14 +51,11 @@
         }
         .back-link:hover { text-decoration: underline; }
         body.dark-mode .back-link { color: #4da6ff; }
-
         article { max-width: 650px; }
-
         .post-header { margin-bottom: 40px; }
         .post-title { font-size: 32px; font-weight: 600; margin-bottom: 10px; line-height: 1.3; }
         .post-date { font-size: 14px; color: #999; }
         body.dark-mode .post-date { color: #666; }
-
         .post-content { font-size: 17px; line-height: 1.7; }
         .post-content h1 { font-size: 28px; margin: 40px 0 20px; }
         .post-content h2 { font-size: 24px; margin: 35px 0 18px; }
@@ -79,15 +69,12 @@
         body.dark-mode .post-content a { color: #4da6ff; }
         .post-content strong { font-weight: 600; }
         .post-content em { font-style: italic; }
-
         .loading { color: #999; font-size: 15px; padding: 40px 0; }
-
         footer {
             margin-top: 100px; padding-top: 30px;
             border-top: 1px solid #f0f0f0; font-size: 14px; color: #999; max-width: 650px;
         }
         body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
-
         @media (max-width: 600px) {
             body { padding: 40px 20px; }
             .theme-toggle { top: 10px; right: 10px; }
@@ -101,7 +88,6 @@
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span id="theme-icon">☀️</span>
     </button>
-
     <header>
         <h1><a href="index.html">Liam Todd</a></h1>
         <nav>
@@ -109,18 +95,13 @@
             <a href="life.html">Life</a>
             <a href="food.html">Food</a>
             <a href="travel.html">Travel</a>
-            <a href="bookshelf.html">Bookshelf</a>
         </nav>
     </header>
-
     <a href="#" class="back-link" id="back-link">← Back to posts</a>
-
     <article id="post-article">
         <div class="loading">Loading post...</div>
     </article>
-
     <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
-
     <script>
         async function loadPost() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -128,8 +109,7 @@
             const slug = urlParams.get('slug');
 
             if (!folder || !slug) {
-                document.getElementById('post-article').innerHTML = 
-                    '<p style="color:#999;">Post not found.</p>';
+                document.getElementById('post-article').innerHTML = '<p style="color:#999;">Post not found.</p>';
                 return;
             }
 
@@ -138,36 +118,32 @@
             backLink.textContent = '← Back to ' + folder.charAt(0).toUpperCase() + folder.slice(1);
 
             try {
-                const res = await fetch('/posts/' + folder + '/' + slug + '.md');
-                const markdown = await res.text();
+                const url = 'https://raw.githubusercontent.com/liamtodd15-ship-it/liamtodd-website/main/posts/' + folder + '/' + slug + '.md';
+                const res = await fetch(url);
 
-                if (res.ok) {
-                    const { metadata, body } = parseFrontmatter(markdown);
-                    const htmlContent = markdownToHTML(body);
-
-                    document.getElementById('page-title').textContent = metadata.title + ' - Liam Todd';
-                    
-                    const dateObj = new Date(metadata.date);
-                    const dateStr = dateObj.toLocaleDateString('en-GB', { 
-                        day: 'numeric', 
-                        month: 'long', 
-                        year: 'numeric' 
-                    });
-
-                    document.getElementById('post-article').innerHTML = 
-                        '<div class="post-header">' +
-                            '<h2 class="post-title">' + metadata.title + '</h2>' +
-                            '<div class="post-date">' + dateStr + '</div>' +
-                        '</div>' +
-                        '<div class="post-content">' + htmlContent + '</div>';
-                } else {
-                    document.getElementById('post-article').innerHTML = 
-                        '<p style="color:#999;">Post not found.</p>';
+                if (!res.ok) {
+                    document.getElementById('post-article').innerHTML = '<p style="color:#999;">Post not found.</p>';
+                    return;
                 }
+
+                const markdown = await res.text();
+                const { metadata, body } = parseFrontmatter(markdown);
+                const htmlContent = markdownToHTML(body);
+
+                document.getElementById('page-title').textContent = metadata.title + ' - Liam Todd';
+
+                const dateObj = new Date(metadata.date);
+                const dateStr = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                document.getElementById('post-article').innerHTML =
+                    '<div class="post-header">' +
+                        '<h2 class="post-title">' + metadata.title + '</h2>' +
+                        '<div class="post-date">' + dateStr + '</div>' +
+                    '</div>' +
+                    '<div class="post-content">' + htmlContent + '</div>';
+
             } catch (error) {
-                console.error('Error loading post:', error);
-                document.getElementById('post-article').innerHTML = 
-                    '<p style="color:#999;">Error loading post.</p>';
+                document.getElementById('post-article').innerHTML = '<p style="color:#999;">Error loading post.</p>';
             }
         }
 
@@ -176,74 +152,39 @@
             const metadata = { title: '', date: '', excerpt: '' };
             let inFrontmatter = false;
             const bodyLines = [];
-
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
-                
                 if (line === '---') {
-                    if (!inFrontmatter) {
-                        inFrontmatter = true;
-                        continue;
-                    } else {
-                        inFrontmatter = false;
-                        continue;
-                    }
+                    if (!inFrontmatter) { inFrontmatter = true; continue; }
+                    else { inFrontmatter = false; continue; }
                 }
-                
                 if (inFrontmatter) {
-                    if (line.startsWith('title:')) {
-                        metadata.title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
-                    }
-                    if (line.startsWith('date:')) {
-                        metadata.date = line.replace('date:', '').trim();
-                    }
-                    if (line.startsWith('excerpt:')) {
-                        metadata.excerpt = line.replace('excerpt:', '').trim().replace(/^["']|["']$/g, '');
-                    }
+                    if (line.startsWith('title:')) metadata.title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
+                    if (line.startsWith('date:')) metadata.date = line.replace('date:', '').trim();
+                    if (line.startsWith('excerpt:')) metadata.excerpt = line.replace('excerpt:', '').trim().replace(/^["']|["']$/g, '');
                 } else {
                     bodyLines.push(lines[i]);
                 }
             }
-
-            return {
-                metadata,
-                body: bodyLines.join('\n').trim()
-            };
+            return { metadata, body: bodyLines.join('\n').trim() };
         }
 
         function markdownToHTML(markdown) {
             let html = markdown;
-
-            // Headers
             html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
             html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
             html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-
-            // Bold
             html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            
-            // Italic
             html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-            
-            // Links
             html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-            
-            // Images
             html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-            
-            // Line breaks to paragraphs
             html = html.split('\n\n').map(para => {
                 const trimmed = para.trim();
-                if (trimmed && !trimmed.startsWith('<')) {
-                    return '<p>' + trimmed + '</p>';
-                }
+                if (trimmed && !trimmed.startsWith('<')) return '<p>' + trimmed + '</p>';
                 return trimmed;
             }).join('\n');
-
-            // Lists
             html = html.replace(/^\- (.+)$/gim, '<li>$1</li>');
-            html = html.replace(/(<li>.*?<\/li>)/s, '<ul>$1</ul>');
-
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
             return html;
         }
 
@@ -251,12 +192,12 @@
             const body = document.body;
             const icon = document.getElementById('theme-icon');
             body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) { 
-                icon.textContent = '🌙'; 
-                localStorage.setItem('theme', 'dark'); 
-            } else { 
-                icon.textContent = '☀️'; 
-                localStorage.setItem('theme', 'light'); 
+            if (body.classList.contains('dark-mode')) {
+                icon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
             }
         }
 
