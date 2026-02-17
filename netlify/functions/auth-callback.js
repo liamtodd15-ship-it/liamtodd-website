@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 exports.handler = async (event) => {
     const { code } = event.queryStringParameters;
 
@@ -18,14 +16,14 @@ exports.handler = async (event) => {
         });
 
         const data = await response.json();
+        const token = data.access_token;
 
         const script = `
         <script>
             (function() {
                 function receiveMessage(e) {
-                    console.log("receiveMessage %o", e);
                     window.opener.postMessage(
-                        'authorization:github:success:${JSON.stringify({ token: data.access_token, provider: 'github' })}',
+                        'authorization:github:success:' + JSON.stringify({ token: '${token}', provider: 'github' }),
                         e.origin
                     );
                     window.removeEventListener("message", receiveMessage, false);
