@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Liam Todd</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+            transition: background-color 0.3s, color 0.3s;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        body.dark-mode { background: #1a1a1a; color: #e0e0e0; }
+
+        .theme-toggle {
+            position: fixed; top: 20px; right: 20px;
+            width: 40px; height: 40px;
+            border: 1px solid #e0e0e0;
+            background: transparent; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; transition: border-color 0.3s; z-index: 1000;
+        }
+        body.dark-mode .theme-toggle { border-color: #404040; }
+        .theme-toggle:hover { border-color: #999; }
+
+        header { margin-bottom: 60px; max-width: 650px; }
+
+        h1 { font-size: 28px; font-weight: 600; margin-bottom: 20px; letter-spacing: -0.5px; }
+        h1 a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
+        h1 a:hover { color: #666; }
+        body.dark-mode h1 a { color: #e0e0e0; }
+        body.dark-mode h1 a:hover { color: #999; }
+
+        nav { margin-top: 30px; }
+        nav a {
+            color: #666; text-decoration: none; margin-right: 20px; font-size: 15px;
+            transition: color 0.2s, border-bottom-color 0.2s;
+            border-bottom: 1px solid transparent; padding-bottom: 2px;
+        }
+        nav a:hover, nav a.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+        body.dark-mode nav a { color: #999; }
+        body.dark-mode nav a:hover, body.dark-mode nav a.active { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+
+        .content {
+            max-width: 650px;
+            margin-top: 80px;
+        }
+
+        .error-code {
+            font-size: 96px;
+            font-weight: 700;
+            color: #f0f0f0;
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: -4px;
+        }
+        body.dark-mode .error-code { color: #2a2a2a; }
+
+        .error-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+        body.dark-mode .error-title { color: #e0e0e0; }
+
+        .error-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+        body.dark-mode .error-message { color: #999; }
+
+        .back-link {
+            display: inline-block;
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 15px;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 2px;
+            transition: color 0.2s, border-bottom-color 0.2s;
+        }
+        .back-link:hover { color: #666; border-bottom-color: #666; }
+        body.dark-mode .back-link { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+        body.dark-mode .back-link:hover { color: #999; border-bottom-color: #999; }
+
+        footer {
+            margin-top: 100px; padding-top: 30px;
+            border-top: 1px solid #f0f0f0; font-size: 14px; color: #999; max-width: 650px;
+        }
+        body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
+
+        @media (max-width: 600px) {
+            body { padding: 40px 20px; }
+            .theme-toggle { top: 10px; right: 10px; }
+            h1 { font-size: 24px; }
+            nav a { display: inline-block; margin-bottom: 10px; }
+            .error-code { font-size: 72px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="theme-icon">☀️</span>
+    </button>
+
+    <header>
+        <h1><a href="index.html">Liam Todd</a></h1>
+        <nav>
+            <a href="index.html">About</a>
+            <a href="life.html">Life</a>
+            <a href="food.html">Food</a>
+            <a href="travel.html">Travel</a>
+        </nav>
+    </header>
+
+    <div class="content">
+        <div class="error-code">404</div>
+        <div class="error-title">Page not found</div>
+        <p class="error-message">Looks like this page doesn't exist — it may have moved or the link might be wrong.</p>
+        <a href="index.html" class="back-link">← Back to home</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Liam Todd. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            var body = document.body;
+            var icon = document.getElementById('theme-icon');
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) { icon.textContent = '🌙'; localStorage.setItem('theme', 'dark'); }
+            else { icon.textContent = '☀️'; localStorage.setItem('theme', 'light'); }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').textContent = '🌙';
+            }
+        });
+    </script>
+</body>
+</html>
