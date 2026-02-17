@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: liamtodd15-ship-it/liamtodd-website
   branch: main
+  base_url: https://liamtodd.co.uk
+  auth_endpoint: /.netlify/functions/auth
 
 media_folder: "images"
 
