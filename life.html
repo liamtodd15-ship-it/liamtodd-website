@@ -119,28 +119,11 @@
     <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
 
     <script>
-        // Fetch posts from the posts/life folder
         async function loadPosts() {
             var list = document.getElementById('post-list');
             try {
-                var res = await fetch('/posts/life/');
-                var html = await res.text();
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(html, 'text/html');
-                var links = doc.querySelectorAll('a[href$=".md"]');
-                var posts = [];
-
-                for (var i = 0; i < links.length; i++) {
-                    var href = links[i].getAttribute('href');
-                    var postRes = await fetch('/posts/life/' + href);
-                    var content = await postRes.text();
-                    var post = parseFrontmatter(content);
-                    post.file = href.replace('.md', '.html');
-                    posts.push(post);
-                }
-
-                // Sort by date, newest first
-                posts.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+                var res = await fetch('/.netlify/functions/get-posts?category=life');
+                var posts = await res.json();
 
                 if (posts.length === 0) {
                     list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
@@ -160,30 +143,6 @@
             } catch(e) {
                 list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
             }
-        }
-
-        function parseFrontmatter(content) {
-            var lines = content.split('\n');
-            var data = { title: '', date: '', excerpt: '', body: '' };
-            var inFrontmatter = false;
-            var bodyLines = [];
-
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i].trim();
-                if (line === '---') {
-                    if (!inFrontmatter) { inFrontmatter = true; continue; }
-                    else { inFrontmatter = false; continue; }
-                }
-                if (inFrontmatter) {
-                    if (line.startsWith('title:')) data.title = line.replace('title:', '').trim().replace(/^["']|["']$/g, '');
-                    if (line.startsWith('date:')) data.date = line.replace('date:', '').trim();
-                    if (line.startsWith('excerpt:')) data.excerpt = line.replace('excerpt:', '').trim().replace(/^["']|["']$/g, '');
-                } else {
-                    bodyLines.push(lines[i]);
-                }
-            }
-            data.body = bodyLines.join('\n').trim();
-            return data;
         }
 
         function toggleTheme() {
