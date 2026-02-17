@@ -1,6 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-
 exports.handler = async function(event) {
     const category = event.queryStringParameters && event.queryStringParameters.category;
 
@@ -11,10 +8,17 @@ exports.handler = async function(event) {
         };
     }
 
-    const postsDir = path.join(__dirname, '..', '..', 'posts', category);
-
     try {
-        if (!fs.existsSync(postsDir)) {
+        const apiUrl = `https://api.github.com/repos/liamtodd15-ship-it/liamtodd-website/contents/posts/${category}`;
+        const response = await fetch(apiUrl, {
+            headers: {
+                'Authorization': `token ${process.env.GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'liamtodd-website'
+            }
+        });
+
+        if (response.status === 404) {
             return {
                 statusCode: 200,
                 headers: { 'Content-Type': 'application/json' },
@@ -22,13 +26,15 @@ exports.handler = async function(event) {
             };
         }
 
-        const files = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'));
+        const files = await response.json();
+        const mdFiles = files.filter(f => f.name.endsWith('.md'));
         const posts = [];
 
-        for (const file of files) {
-            const content = fs.readFileSync(path.join(postsDir, file), 'utf8');
+        for (const file of mdFiles) {
+            const fileRes = await fetch(file.download_url);
+            const content = await fileRes.text();
             const post = parseFrontmatter(content);
-            post.file = file.replace('.md', '.html');
+            post.file = file.name.replace('.md', '.html');
             posts.push(post);
         }
 
