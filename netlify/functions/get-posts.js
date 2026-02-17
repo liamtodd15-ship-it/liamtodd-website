@@ -5,21 +5,14 @@ exports.handler = async function(event) {
     const category = event.queryStringParameters && event.queryStringParameters.category;
 
     if (!category || !['life', 'food', 'travel'].includes(category)) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Invalid category' })
-        };
+        return { statusCode: 400, body: JSON.stringify({ error: 'Invalid category' }) };
     }
 
     const postsDir = path.join(__dirname, '..', '..', 'posts', category);
 
     try {
         if (!fs.existsSync(postsDir)) {
-            return {
-                statusCode: 200,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify([])
-            };
+            return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([]) };
         }
 
         const files = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'));
@@ -34,17 +27,10 @@ exports.handler = async function(event) {
 
         posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        return {
-            statusCode: 200,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(posts)
-        };
+        return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(posts) };
 
     } catch (err) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: err.message })
-        };
+        return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
     }
 };
 
