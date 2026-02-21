@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food - Liam Todd</title>
+    <title>Finance - Liam Todd</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -104,14 +104,14 @@
         <nav>
             <a href="index.html">About</a>
             <a href="life.html">Life</a>
-            <a href="finance.html">Finance</a>
-            <a href="food.html" class="active">Food</a>
+            <a href="finance.html" class="active">Finance</a>
+            <a href="food.html">Food</a>
             <a href="travel.html">Travel</a>
         </nav>
     </header>
 
     <div class="content">
-        <h2>Food</h2>
+        <h2>Finance</h2>
         <ul class="post-list" id="post-list">
             <li class="loading">Loading posts...</li>
         </ul>
@@ -123,7 +123,7 @@
         async function loadPosts() {
             var list = document.getElementById('post-list');
             try {
-                var res = await fetch('/.netlify/functions/get-posts?category=food');
+                var res = await fetch('/.netlify/functions/get-posts?category=finance');
                 var posts = await res.json();
 
                 if (posts.length === 0) {
@@ -136,7 +136,7 @@
                     var dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
                     return '<li class="post-item">' +
                         '<div class="post-date">' + dateStr + '</div>' +
-                        '<div class="post-title"><a href="post.html?folder=food&slug=' + post.file.replace('.html','') + '">' + post.title + '</a></div>' +
+                        '<div class="post-title"><a href="post.html?folder=finance&slug=' + post.file.replace('.html','') + '">' + post.title + '</a></div>' +
                         '<div class="post-excerpt">' + post.excerpt + '</div>' +
                     '</li>';
                 }).join('');

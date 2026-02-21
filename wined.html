@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Food - Liam Todd</title>
+    <title>Wined - Liam Todd</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -45,9 +45,7 @@
             border-bottom: 1px solid #e0e0e0; display: inline-block;
             transition: color 0.2s, border-color 0.2s;
         }
-        h2:hover { color: #000; }
         body.dark-mode h2 { color: #e0e0e0; border-bottom-color: #404040; }
-        body.dark-mode h2:hover { color: #fff; }
 
         nav { margin-top: 30px; }
         nav a {
@@ -59,30 +57,25 @@
         body.dark-mode nav a { color: #999; }
         body.dark-mode nav a:hover, body.dark-mode nav a.active { color: #e0e0e0; border-bottom-color: #e0e0e0; }
 
-        .content { margin-bottom: 80px; max-width: 650px; }
+        .content {
+            max-width: 650px;
+        }
 
-        .post-list { list-style: none; }
-        .post-item { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid #f0f0f0; }
-        body.dark-mode .post-item { border-bottom-color: #2a2a2a; }
-        .post-item:last-child { border-bottom: none; }
-
-        .post-date { font-size: 14px; color: #999; margin-bottom: 6px; }
-        body.dark-mode .post-date { color: #666; }
-
-        .post-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
-        .post-title a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
-        .post-title a:hover { color: #0066cc; }
-        body.dark-mode .post-title a { color: #e0e0e0; }
-        body.dark-mode .post-title a:hover { color: #4da6ff; }
-
-        .post-excerpt { font-size: 15px; color: #666; line-height: 1.6; }
-        body.dark-mode .post-excerpt { color: #999; }
-
-        .loading { color: #999; font-size: 15px; padding: 20px 0; }
+        .content p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        body.dark-mode .content p { color: #b0b0b0; }
 
         footer {
-            margin-top: 100px; padding-top: 30px;
-            border-top: 1px solid #f0f0f0; font-size: 14px; color: #999; max-width: 650px;
+            margin-top: 100px;
+            padding-top: 30px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #999;
+            max-width: 650px;
         }
         body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
 
@@ -90,7 +83,6 @@
             body { padding: 40px 20px; }
             .theme-toggle { top: 10px; right: 10px; }
             h1 { font-size: 24px; }
-            nav a { display: inline-block; margin-bottom: 10px; }
         }
     </style>
 </head>
@@ -105,61 +97,43 @@
             <a href="index.html">About</a>
             <a href="life.html">Life</a>
             <a href="finance.html">Finance</a>
-            <a href="food.html" class="active">Food</a>
+            <a href="food.html">Food</a>
             <a href="travel.html">Travel</a>
         </nav>
     </header>
 
     <div class="content">
-        <h2>Food</h2>
-        <ul class="post-list" id="post-list">
-            <li class="loading">Loading posts...</li>
-        </ul>
+        <h2>Wined</h2>
+        <p>Co-Founder &middot; 2021 &ndash; 2023</p>
+        <p>Launched a wine and food subscription box, building the brand around making premium wines familiar via educational content.</p>
+        <p>Used scenario planning to project financial forecasts and explore product expansions, informed by market analysis and industry trends.</p>
+        <p>Successfully organised a friends and family investment round, resulting in the generation of &pound;5,000 investment, while effectively overseeing all necessary compliance procedures.</p>
     </div>
 
-    <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
+    <footer>
+        <p>&copy; 2026 Liam Todd. All rights reserved.</p>
+    </footer>
 
     <script>
-        async function loadPosts() {
-            var list = document.getElementById('post-list');
-            try {
-                var res = await fetch('/.netlify/functions/get-posts?category=food');
-                var posts = await res.json();
-
-                if (posts.length === 0) {
-                    list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
-                    return;
-                }
-
-                list.innerHTML = posts.map(function(post) {
-                    var d = new Date(post.date);
-                    var dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-                    return '<li class="post-item">' +
-                        '<div class="post-date">' + dateStr + '</div>' +
-                        '<div class="post-title"><a href="post.html?folder=food&slug=' + post.file.replace('.html','') + '">' + post.title + '</a></div>' +
-                        '<div class="post-excerpt">' + post.excerpt + '</div>' +
-                    '</li>';
-                }).join('');
-
-            } catch(e) {
-                list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
-            }
-        }
-
         function toggleTheme() {
             var body = document.body;
             var icon = document.getElementById('theme-icon');
             body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) { icon.textContent = '🌙'; localStorage.setItem('theme', 'dark'); }
-            else { icon.textContent = '☀️'; localStorage.setItem('theme', 'light'); }
+            if (body.classList.contains('dark-mode')) {
+                icon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            if (localStorage.getItem('theme') === 'dark') {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-icon').textContent = '🌙';
             }
-            loadPosts();
         });
     </script>
 </body>

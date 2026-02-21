@@ -1,7 +1,7 @@
 exports.handler = async function(event) {
     const category = event.queryStringParameters && event.queryStringParameters.category;
 
-    if (!category || !['life', 'food', 'travel'].includes(category)) {
+    if (!category || !['life', 'food', 'travel', 'finance'].includes(category)) {
         return {
             statusCode: 400,
             body: JSON.stringify({ error: 'Invalid category' })

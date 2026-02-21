@@ -30,6 +30,17 @@ collections:
       - { label: "Excerpt", name: "excerpt", widget: "text" }
       - { label: "Body", name: "body", widget: "markdown" }
 
+  - name: "finance"
+    label: "Finance"
+    folder: "posts/finance"
+    create: true
+    slug: "finance-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
   - name: "travel"
     label: "Travel"
     folder: "posts/travel"
