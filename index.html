@@ -178,16 +178,16 @@
 
         .book-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 14px;
         }
 
         .book-item { cursor: pointer; transition: transform 0.2s; }
-        .book-item:hover { transform: translateY(-5px); }
+        .book-item:hover { transform: translateY(-4px); }
 
         .book-cover-wrap {
             width: 100%;
-            height: 210px;
+            height: 148px;
             border-radius: 4px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -244,6 +244,21 @@
         .chess-loading { font-size: 14px; color: #999; }
         body.dark-mode .chess-loading { color: #666; }
 
+        .back-to-top {
+            position: fixed; bottom: 24px; right: 20px;
+            width: 36px; height: 36px;
+            border: 1px solid #e0e0e0; background: #fff;
+            cursor: pointer; display: none;
+            align-items: center; justify-content: center;
+            font-size: 16px; color: #666;
+            transition: border-color 0.2s, color 0.2s, opacity 0.2s;
+            z-index: 999; opacity: 0;
+        }
+        .back-to-top.visible { display: flex; opacity: 1; }
+        .back-to-top:hover { border-color: #999; color: #1a1a1a; }
+        body.dark-mode .back-to-top { background: #1a1a1a; border-color: #404040; color: #999; }
+        body.dark-mode .back-to-top:hover { border-color: #666; color: #e0e0e0; }
+
         @media (max-width: 768px) {
             .top-section { grid-template-columns: 1fr; gap: 40px; }
         }
@@ -253,8 +268,8 @@
             .theme-toggle { top: 10px; right: 10px; }
             h1 { font-size: 24px; }
             nav a { display: inline-block; margin-bottom: 10px; }
-            .book-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
-            .book-cover-wrap { height: 165px; }
+            .book-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; }
+            .book-cover-wrap { height: 114px; }
         }
     </style>
 </head>
@@ -262,9 +277,10 @@
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span id="theme-icon">☀️</span>
     </button>
+    <button class="back-to-top" id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
 
     <header>
-        <h1><a href="index.html">Liam Todd</a></h1>
+        <h1><a href="index.html" id="site-title"></a></h1>
         <nav>
             <div class="nav-dropdown">
                 <a href="index.html" class="active">About</a>
@@ -456,7 +472,26 @@
             }
             renderBooks();
             loadChessData();
+            typeHeading();
+
+            window.addEventListener('scroll', function() {
+                var btn = document.getElementById('back-to-top');
+                if (window.scrollY > 400) btn.classList.add('visible');
+                else btn.classList.remove('visible');
+            });
         });
+
+        function typeHeading() {
+            var el = document.getElementById('site-title');
+            var text = 'Liam Todd';
+            var i = 0;
+            el.textContent = '';
+            var interval = setInterval(function() {
+                el.textContent += text[i];
+                i++;
+                if (i >= text.length) clearInterval(interval);
+            }, 90);
+        }
 
         async function loadChessData() {
             var username = 'landoftodd';
@@ -470,6 +505,7 @@
                 var rec = blitz.record;
                 var total = rec.win + rec.loss + rec.draw;
                 var winPct = total > 0 ? Math.round((rec.win / total) * 100) : 0;
+                var tactics = stats.tactics && stats.tactics.highest ? stats.tactics.highest.rating : null;
 
                 container.innerHTML =
                     '<div class="chess-stats">' +
@@ -481,6 +517,10 @@
                             '<div class="chess-stat-label">Peak</div>' +
                             '<div class="chess-stat-value" id="chess-peak">' + peak + '</div>' +
                         '</div>' +
+                        (tactics ? '<div>' +
+                            '<div class="chess-stat-label">Tactics (Best)</div>' +
+                            '<div class="chess-stat-value">' + tactics + '</div>' +
+                        '</div>' : '') +
                         '<div>' +
                             '<div class="chess-stat-label">Record (W / L / D)</div>' +
                             '<div class="chess-stat-value small">' + rec.win + ' / ' + rec.loss + ' / ' + rec.draw + ' &nbsp;&middot;&nbsp; ' + winPct + '% wins</div>' +
