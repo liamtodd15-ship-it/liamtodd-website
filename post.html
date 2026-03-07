@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Post - Liam Todd</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -42,6 +43,23 @@
         nav a:hover { color: #1a1a1a; border-bottom-color: #1a1a1a; }
         body.dark-mode nav a { color: #999; }
         body.dark-mode nav a:hover { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+        .nav-dropdown { position: relative; display: inline-block; margin-right: 20px; }
+        .nav-dropdown > a { margin-right: 0; }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; padding-top: 6px; display: none; z-index: 100; }
+        .nav-dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu-box {
+            background: #fff; border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); min-width: 70px;
+        }
+        .dropdown-menu a {
+            display: block; padding: 8px 14px; color: #666; text-decoration: none;
+            font-size: 15px; margin-right: 0; border-bottom: none;
+            transition: color 0.2s, background 0.2s;
+        }
+        .dropdown-menu a:hover { color: #1a1a1a; background: #f8f8f8; border-bottom: none; }
+        body.dark-mode .dropdown-menu-box { background: #2a2a2a; border-color: #404040; }
+        body.dark-mode .dropdown-menu a { color: #999; }
+        body.dark-mode .dropdown-menu a:hover { color: #e0e0e0; background: #333; }
         .back-link {
             display: inline-block;
             color: #0066cc;
@@ -91,8 +109,16 @@
     <header>
         <h1><a href="index.html">Liam Todd</a></h1>
         <nav>
-            <a href="index.html">About</a>
+            <div class="nav-dropdown">
+                <a href="index.html">About</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-menu-box">
+                        <a href="cv.html" target="_blank">CV</a>
+                    </div>
+                </div>
+            </div>
             <a href="life.html">Life</a>
+            <a href="finance.html">Finance</a>
             <a href="food.html">Food</a>
             <a href="travel.html">Travel</a>
         </nav>
