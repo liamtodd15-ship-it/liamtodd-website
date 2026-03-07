@@ -225,6 +225,25 @@
         }
         body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
 
+        .chess-section { margin-top: 80px; }
+        .chess-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+        .chess-header h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .chess-link { font-size: 13px; color: #999; text-decoration: none; border-bottom: 1px solid transparent; transition: color 0.2s, border-bottom-color 0.2s; }
+        .chess-link:hover { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+        body.dark-mode .chess-link { color: #666; }
+        body.dark-mode .chess-link:hover { color: #e0e0e0; border-bottom-color: #e0e0e0; }
+        .chess-stats { display: flex; gap: 40px; margin-bottom: 20px; flex-wrap: wrap; }
+        .chess-stat-label { font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        body.dark-mode .chess-stat-label { color: #666; }
+        .chess-stat-value { font-size: 28px; font-weight: 600; color: #1a1a1a; letter-spacing: -0.5px; }
+        body.dark-mode .chess-stat-value { color: #e0e0e0; }
+        .chess-stat-value.small { font-size: 16px; font-weight: 400; color: #333; }
+        body.dark-mode .chess-stat-value.small { color: #b0b0b0; }
+        .chess-sparkline-wrap { margin-top: 4px; }
+        .chess-sparkline { width: 100%; max-width: 500px; height: 70px; display: block; overflow: visible; }
+        .chess-loading { font-size: 14px; color: #999; }
+        body.dark-mode .chess-loading { color: #666; }
+
         @media (max-width: 768px) {
             .top-section { grid-template-columns: 1fr; gap: 40px; }
         }
@@ -293,6 +312,16 @@
                     <div class="tab-desc">Stories from around the UK and beyond</div>
                 </a>
             </div>
+        </div>
+    </div>
+
+    <div class="chess-section">
+        <div class="chess-header">
+            <h2>Chess</h2>
+            <a class="chess-link" href="https://www.chess.com/member/landoftodd" target="_blank">landoftodd on Chess.com ↗</a>
+        </div>
+        <div id="chess-content">
+            <p class="chess-loading">Loading...</p>
         </div>
     </div>
 
@@ -426,7 +455,132 @@
                 document.getElementById('theme-icon').textContent = '🌙';
             }
             renderBooks();
+            loadChessData();
         });
+
+        async function loadChessData() {
+            var username = 'landoftodd';
+            var container = document.getElementById('chess-content');
+            try {
+                var statsRes = await fetch('https://api.chess.com/pub/player/' + username + '/stats');
+                var stats = await statsRes.json();
+                var blitz = stats.chess_blitz;
+                var current = blitz.last.rating;
+                var peak = blitz.best.rating;
+                var rec = blitz.record;
+                var total = rec.win + rec.loss + rec.draw;
+                var winPct = total > 0 ? Math.round((rec.win / total) * 100) : 0;
+
+                container.innerHTML =
+                    '<div class="chess-stats">' +
+                        '<div>' +
+                            '<div class="chess-stat-label">Blitz Rating</div>' +
+                            '<div class="chess-stat-value" id="chess-rating">' + current + '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<div class="chess-stat-label">Peak</div>' +
+                            '<div class="chess-stat-value" id="chess-peak">' + peak + '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<div class="chess-stat-label">Record (W / L / D)</div>' +
+                            '<div class="chess-stat-value small">' + rec.win + ' / ' + rec.loss + ' / ' + rec.draw + ' &nbsp;&middot;&nbsp; ' + winPct + '% wins</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="chess-sparkline-wrap">' +
+                        '<svg class="chess-sparkline" id="chess-sparkline"></svg>' +
+                    '</div>';
+
+                var now = new Date();
+                var allGames = [];
+                for (var i = 2; i >= 0; i--) {
+                    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    var yr = d.getFullYear();
+                    var mo = String(d.getMonth() + 1).padStart(2, '0');
+                    try {
+                        var gRes = await fetch('https://api.chess.com/pub/player/' + username + '/games/' + yr + '/' + mo);
+                        var gData = await gRes.json();
+                        if (gData.games) allGames = allGames.concat(gData.games);
+                    } catch (e) {}
+                }
+
+                var blitzGames = allGames
+                    .filter(function(g) { return g.time_class === 'blitz'; })
+                    .sort(function(a, b) { return a.end_time - b.end_time; });
+
+                var ratings = blitzGames.map(function(g) {
+                    var isWhite = g.white.username.toLowerCase() === username.toLowerCase();
+                    return isWhite ? g.white.rating : g.black.rating;
+                });
+
+                if (ratings.length > 1) drawSparkline(ratings);
+
+            } catch (e) {
+                container.innerHTML = '<p class="chess-loading">Could not load chess data.</p>';
+            }
+        }
+
+        function drawSparkline(ratings) {
+            var svg = document.getElementById('chess-sparkline');
+            if (!svg) return;
+            var W = 500, H = 70, pad = 6;
+            var isDark = document.body.classList.contains('dark-mode');
+            var strokeColor = isDark ? '#e0e0e0' : '#1a1a1a';
+            var dotColor = isDark ? '#e0e0e0' : '#1a1a1a';
+            var gridColor = isDark ? '#2a2a2a' : '#f0f0f0';
+
+            var min = Math.min.apply(null, ratings);
+            var max = Math.max.apply(null, ratings);
+            var range = max - min || 1;
+
+            var ns = 'http://www.w3.org/2000/svg';
+            svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+            // Horizontal grid lines at min and max
+            [0.1, 0.5, 0.9].forEach(function(t) {
+                var y = pad + (1 - t) * (H - pad * 2);
+                var line = document.createElementNS(ns, 'line');
+                line.setAttribute('x1', pad); line.setAttribute('x2', W - pad);
+                line.setAttribute('y1', y); line.setAttribute('y2', y);
+                line.setAttribute('stroke', gridColor); line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
+            });
+
+            // Build points
+            var pts = ratings.map(function(r, i) {
+                var x = pad + (i / (ratings.length - 1)) * (W - pad * 2);
+                var y = pad + (1 - (r - min) / range) * (H - pad * 2);
+                return x.toFixed(1) + ',' + y.toFixed(1);
+            });
+
+            // Fill area under line
+            var firstPt = pts[0].split(',');
+            var lastPt = pts[pts.length - 1].split(',');
+            var area = document.createElementNS(ns, 'polygon');
+            area.setAttribute('points',
+                pad + ',' + (H - pad) + ' ' +
+                pts.join(' ') + ' ' +
+                lastPt[0] + ',' + (H - pad)
+            );
+            area.setAttribute('fill', isDark ? 'rgba(224,224,224,0.05)' : 'rgba(26,26,26,0.04)');
+            svg.appendChild(area);
+
+            // Line
+            var poly = document.createElementNS(ns, 'polyline');
+            poly.setAttribute('points', pts.join(' '));
+            poly.setAttribute('fill', 'none');
+            poly.setAttribute('stroke', strokeColor);
+            poly.setAttribute('stroke-width', '1.5');
+            poly.setAttribute('stroke-linejoin', 'round');
+            poly.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(poly);
+
+            // End dot
+            var lp = lastPt;
+            var circle = document.createElementNS(ns, 'circle');
+            circle.setAttribute('cx', lp[0]); circle.setAttribute('cy', lp[1]);
+            circle.setAttribute('r', '3'); circle.setAttribute('fill', dotColor);
+            svg.appendChild(circle);
+        }
     </script>
     <script>
         if (window.netlifyIdentity) {
