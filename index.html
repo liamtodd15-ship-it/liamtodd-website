@@ -483,13 +483,26 @@
 
         function typeHeading() {
             var el = document.getElementById('site-title');
-            var text = 'Liam Todd';
+            var base = 'Liam Todd';
+            var dots = '...';
+            var full = base + dots;
             var i = 0;
             el.textContent = '';
-            var interval = setInterval(function() {
-                el.textContent += text[i];
+            var init = setInterval(function() {
+                el.textContent += full[i];
                 i++;
-                if (i >= text.length) clearInterval(interval);
+                if (i >= full.length) {
+                    clearInterval(init);
+                    setInterval(function() {
+                        el.textContent = base;
+                        var j = 0;
+                        var retype = setInterval(function() {
+                            el.textContent += dots[j];
+                            j++;
+                            if (j >= dots.length) clearInterval(retype);
+                        }, 120);
+                    }, 10000);
+                }
             }, 90);
         }
 
@@ -505,8 +518,6 @@
                 var rec = blitz.record;
                 var total = rec.win + rec.loss + rec.draw;
                 var winPct = total > 0 ? Math.round((rec.win / total) * 100) : 0;
-                var tactics = stats.tactics && stats.tactics.highest ? stats.tactics.highest.rating : null;
-
                 container.innerHTML =
                     '<div class="chess-stats">' +
                         '<div>' +
@@ -517,10 +528,6 @@
                             '<div class="chess-stat-label">Peak</div>' +
                             '<div class="chess-stat-value" id="chess-peak">' + peak + '</div>' +
                         '</div>' +
-                        (tactics ? '<div>' +
-                            '<div class="chess-stat-label">Tactics (Best)</div>' +
-                            '<div class="chess-stat-value">' + tactics + '</div>' +
-                        '</div>' : '') +
                         '<div>' +
                             '<div class="chess-stat-label">Record (W / L / D)</div>' +
                             '<div class="chess-stat-value small">' + rec.win + ' / ' + rec.loss + ' / ' + rec.draw + ' &nbsp;&middot;&nbsp; ' + winPct + '% wins</div>' +
