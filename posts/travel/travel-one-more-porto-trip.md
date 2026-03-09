@@ -1,6 +1,6 @@
 ---
 title: One More Porto Trip
-date: 2026-03-06T18:15:00.000+00:00
+date: 2026-03-09T21:52:00.000+00:00
 excerpt: With each flight, Porto feels more and more like home
 ---
 The first Porto trip of the year, my 7th time visiting this city. Hopefully, I won't be 'visiting' for much longer, and I'll be settling down here.
