@@ -9,4 +9,4 @@ This trip was nice for a few reasons. Firstly, we ticked off a lot of food place
 
 But most importantly, it was nice to see that Vic has found her people. She has a nice group of friends she seems genuinely happy with and that makes me happy too. It takes a lot of time to meet people that fit with you, but when you do it gives you a lot of validation.
 
-![]()
+![](/images/img_3339.jpeg)
