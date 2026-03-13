@@ -75,29 +75,29 @@
         body.dark-mode .dropdown-menu a { color: #999; }
         body.dark-mode .dropdown-menu a:hover { color: #e0e0e0; border-bottom-color: #e0e0e0; }
 
-        .content { margin-bottom: 80px; max-width: 650px; }
+        .content { margin-bottom: 80px; }
 
         .writing-cards {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 0;
+            gap: 24px;
         }
 
         .writing-card {
-            display: block;
+            display: flex;
             text-decoration: none;
             color: #1a1a1a;
-            padding: 24px;
+            padding: 32px;
             border: 1px solid #e0e0e0;
-            margin-bottom: -1px;
             transition: border-color 0.2s;
             position: relative;
+            gap: 32px;
+            align-items: stretch;
         }
 
         .writing-card:hover {
             border: 2px solid #1a1a1a;
-            padding: 23px;
-            z-index: 1;
+            padding: 31px;
         }
 
         body.dark-mode .writing-card {
@@ -109,20 +109,63 @@
             border-color: #e0e0e0;
         }
 
+        .card-text {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         .writing-card-title {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .writing-card-desc {
-            font-size: 15px;
+            font-size: 14px;
             color: #666;
             line-height: 1.6;
+            margin-bottom: 12px;
         }
 
         body.dark-mode .writing-card-desc {
             color: #999;
+        }
+
+        .writing-card-date {
+            font-size: 13px;
+            color: #999;
+        }
+
+        body.dark-mode .writing-card-date {
+            color: #666;
+        }
+
+        .card-images {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+            min-height: 160px;
+        }
+
+        .card-images img {
+            flex: 1;
+            object-fit: cover;
+            border-radius: 4px;
+            min-width: 0;
+            max-height: 200px;
+        }
+
+        .card-images .img-placeholder {
+            flex: 1;
+            background: #f5f5f5;
+            border-radius: 4px;
+            min-width: 0;
+        }
+
+        body.dark-mode .card-images .img-placeholder {
+            background: #2a2a2a;
         }
 
         footer {
@@ -130,6 +173,18 @@
             border-top: 1px solid #f0f0f0; font-size: 14px; color: #999; max-width: 650px;
         }
         body.dark-mode footer { border-top-color: #2a2a2a; color: #666; }
+
+        @media (max-width: 768px) {
+            .writing-card {
+                flex-direction: column;
+            }
+            .card-text {
+                flex: none;
+            }
+            .card-images {
+                min-height: 140px;
+            }
+        }
 
         @media (max-width: 600px) {
             body { padding: 40px 20px; }
@@ -171,24 +226,66 @@
     <div class="content">
         <h2>Writing</h2>
         <div class="writing-cards">
-            <a href="life.html" class="writing-card">
-                <div class="writing-card-title">Life</div>
-                <div class="writing-card-desc">Thoughts on everyday life and building things</div>
+
+            <a href="life.html" class="writing-card" id="card-life">
+                <div class="card-text">
+                    <div class="writing-card-title">Life</div>
+                    <div class="writing-card-desc">Thoughts on everyday life and building things</div>
+                    <div class="writing-card-date" data-category="life"></div>
+                </div>
+                <div class="card-images">
+                    <img src="images/life-1.jpg" alt="Life">
+                    <img src="images/life-2.jpg" alt="Life">
+                </div>
             </a>
-            <a href="travel.html" class="writing-card">
-                <div class="writing-card-title">Travel</div>
-                <div class="writing-card-desc">Stories from around the UK and beyond</div>
+
+            <a href="travel.html" class="writing-card" id="card-travel">
+                <div class="card-text">
+                    <div class="writing-card-title">Travel</div>
+                    <div class="writing-card-desc">Stories from around the UK and beyond</div>
+                    <div class="writing-card-date" data-category="travel"></div>
+                </div>
+                <div class="card-images">
+                    <img src="images/travel-1.jpg" alt="Travel">
+                    <img src="images/travel-2.jpg" alt="Travel">
+                </div>
             </a>
-            <a href="food.html" class="writing-card">
-                <div class="writing-card-title">Food</div>
-                <div class="writing-card-desc">Recipes, coffee, and culinary adventures</div>
+
+            <a href="food.html" class="writing-card" id="card-food">
+                <div class="card-text">
+                    <div class="writing-card-title">Food</div>
+                    <div class="writing-card-desc">Recipes, coffee, and culinary adventures</div>
+                    <div class="writing-card-date" data-category="food"></div>
+                </div>
+                <div class="card-images">
+                    <img src="images/food-1.jpg" alt="Food">
+                    <img src="images/food-2.jpg" alt="Food">
+                </div>
             </a>
+
         </div>
     </div>
 
     <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
 
     <script>
+        async function loadLatestDates() {
+            var categories = ['life', 'travel', 'food'];
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                var el = document.querySelector('[data-category="' + cat + '"]');
+                if (!el) continue;
+                try {
+                    var res = await fetch('/.netlify/functions/get-posts?category=' + cat);
+                    var posts = await res.json();
+                    if (posts.length > 0) {
+                        var d = new Date(posts[0].date);
+                        el.textContent = 'Latest: ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                    }
+                } catch(e) {}
+            }
+        }
+
         function toggleTheme() {
             var body = document.body;
             var icon = document.getElementById('theme-icon');
@@ -202,6 +299,7 @@
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-icon').textContent = '🌙';
             }
+            loadLatestDates();
         });
     </script>
 </body>
