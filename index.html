@@ -307,9 +307,9 @@
         <div class="about-col">
             <h2>About</h2>
             <!-- HOMEPAGE BIO — edit the text below -->
-            <p class="bio">
-                The constant urge to document, archive, detail what I see, eat and do in my life. This is the headquarters of almost everything I get up to. Trying to keep it as concise as possible in one central location.
-            </p>
+            <p class="bio">The constant urge to document, archive, detail what I see, eat and do in my life.</p>
+            <p class="bio">This is the headquarters of almost everything I get up to.</p>
+            <p class="bio">Trying to keep it as concise as possible in one central location.</p>
         </div>
 
         <div class="writing-col">
@@ -462,6 +462,7 @@
                 icon.textContent = '☀️';
                 localStorage.setItem('theme', 'light');
             }
+            if (window._chessRatings) drawSparkline(window._chessRatings);
         }
 
         window.addEventListener('DOMContentLoaded', function() {
@@ -559,7 +560,10 @@
                     return isWhite ? g.white.rating : g.black.rating;
                 });
 
-                if (ratings.length > 1) drawSparkline(ratings);
+                if (ratings.length > 1) {
+                    window._chessRatings = ratings;
+                    drawSparkline(ratings);
+                }
 
             } catch (e) {
                 container.innerHTML = '<p class="chess-loading">Could not load chess data.</p>';
@@ -569,6 +573,7 @@
         function drawSparkline(ratings) {
             var svg = document.getElementById('chess-sparkline');
             if (!svg) return;
+            svg.innerHTML = '';
             var W = 500, H = 70, pad = 6;
             var isDark = document.body.classList.contains('dark-mode');
             var strokeColor = isDark ? '#e0e0e0' : '#1a1a1a';
