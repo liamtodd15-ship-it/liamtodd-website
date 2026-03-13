@@ -117,7 +117,7 @@
 
         .writing-col .tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 0;
         }
 
@@ -131,7 +131,7 @@
             transition: color 0.2s;
         }
 
-        .writing-col .tab-link:nth-child(-n+2) {
+        .writing-col .tab-link:first-child {
             border-top: 1px solid #f0f0f0;
         }
 
@@ -140,7 +140,7 @@
         }
 
         body.dark-mode .writing-col .tab-link { color: #b0b0b0; border-bottom-color: #2a2a2a; }
-        body.dark-mode .writing-col .tab-link:nth-child(-n+2) { border-top-color: #2a2a2a; }
+        body.dark-mode .writing-col .tab-link:first-child { border-top-color: #2a2a2a; }
         body.dark-mode .writing-col .tab-link:hover { color: #4da6ff; }
 
         .writing-col .tab-label {
@@ -290,21 +290,25 @@
                     </div>
                 </div>
             </div>
-            <a href="life.html">Life</a>
-            <a href="finance.html">Finance</a>
-            <a href="food.html">Food</a>
-            <a href="travel.html">Travel</a>
+            <div class="nav-dropdown">
+                <a href="writing.html">Writing</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-menu-box">
+                        <a href="life.html">Life</a>
+                        <a href="travel.html">Travel</a>
+                        <a href="food.html">Food</a>
+                    </div>
+                </div>
+            </div>
         </nav>
     </header>
 
     <div class="top-section">
         <div class="about-col">
             <h2>About</h2>
+            <!-- HOMEPAGE BIO — edit the text below -->
             <p class="bio">
-                Used to sell clothes (<a href="unplugged-vintage.html" style="color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:border-color 0.2s;" onmouseover="this.style.borderBottomColor='currentColor'" onmouseout="this.style.borderBottomColor='transparent'">Unplugged Vintage</a>), attempted to sell wine (<a href="wined.html" style="color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:border-color 0.2s;" onmouseover="this.style.borderBottomColor='currentColor'" onmouseout="this.style.borderBottomColor='transparent'">Wined</a>), finally settled into a Finance career and started studying towards the CFA certification.
-            </p>
-            <p class="bio">
-                Still thinking about selling clothes and wine.
+                The constant urge to document, archive, detail what I see, eat and do in my life. This is the headquarters of almost everything I get up to. Trying to keep it as concise as possible in one central location.
             </p>
         </div>
 
@@ -314,10 +318,6 @@
                 <a href="life.html" class="tab-link">
                     <div class="tab-label">Life</div>
                     <div class="tab-desc">Thoughts on everyday life and building things</div>
-                </a>
-                <a href="finance.html" class="tab-link">
-                    <div class="tab-label">Finance</div>
-                    <div class="tab-desc">Markets, investing, and the CFA journey</div>
                 </a>
                 <a href="food.html" class="tab-link">
                     <div class="tab-label">Food</div>
@@ -501,7 +501,7 @@
                             j++;
                             if (j >= dots.length) clearInterval(retype);
                         }, 120);
-                    }, 10000);
+                    }, 2000);
                 }
             }, 90);
         }

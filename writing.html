@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance - Liam Todd</title>
+    <title>Writing - Liam Todd</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -77,24 +77,53 @@
 
         .content { margin-bottom: 80px; max-width: 650px; }
 
-        .post-list { list-style: none; }
-        .post-item { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid #f0f0f0; }
-        body.dark-mode .post-item { border-bottom-color: #2a2a2a; }
-        .post-item:last-child { border-bottom: none; }
+        .writing-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
 
-        .post-date { font-size: 14px; color: #999; margin-bottom: 6px; }
-        body.dark-mode .post-date { color: #666; }
+        .writing-card {
+            display: block;
+            text-decoration: none;
+            color: #1a1a1a;
+            padding: 24px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: -1px;
+            transition: border-color 0.2s;
+            position: relative;
+        }
 
-        .post-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
-        .post-title a { color: #1a1a1a; text-decoration: none; transition: color 0.2s; }
-        .post-title a:hover { color: #0066cc; }
-        body.dark-mode .post-title a { color: #e0e0e0; }
-        body.dark-mode .post-title a:hover { color: #4da6ff; }
+        .writing-card:hover {
+            border: 2px solid #1a1a1a;
+            padding: 23px;
+            z-index: 1;
+        }
 
-        .post-excerpt { font-size: 15px; color: #666; line-height: 1.6; }
-        body.dark-mode .post-excerpt { color: #999; }
+        body.dark-mode .writing-card {
+            color: #e0e0e0;
+            border-color: #404040;
+        }
 
-        .loading { color: #999; font-size: 15px; padding: 20px 0; }
+        body.dark-mode .writing-card:hover {
+            border-color: #e0e0e0;
+        }
+
+        .writing-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .writing-card-desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        body.dark-mode .writing-card-desc {
+            color: #999;
+        }
 
         footer {
             margin-top: 100px; padding-top: 30px;
@@ -126,49 +155,40 @@
                     </div>
                 </div>
             </div>
-            <a href="life.html">Life</a>
-            <a href="finance.html" class="active">Finance</a>
-            <a href="food.html">Food</a>
-            <a href="travel.html">Travel</a>
+            <div class="nav-dropdown">
+                <a href="writing.html" class="active">Writing</a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-menu-box">
+                        <a href="life.html">Life</a>
+                        <a href="travel.html">Travel</a>
+                        <a href="food.html">Food</a>
+                    </div>
+                </div>
+            </div>
         </nav>
     </header>
 
     <div class="content">
-        <h2>Finance</h2>
-        <ul class="post-list" id="post-list">
-            <li class="loading">Loading posts...</li>
-        </ul>
+        <h2>Writing</h2>
+        <div class="writing-cards">
+            <a href="life.html" class="writing-card">
+                <div class="writing-card-title">Life</div>
+                <div class="writing-card-desc">Thoughts on everyday life and building things</div>
+            </a>
+            <a href="travel.html" class="writing-card">
+                <div class="writing-card-title">Travel</div>
+                <div class="writing-card-desc">Stories from around the UK and beyond</div>
+            </a>
+            <a href="food.html" class="writing-card">
+                <div class="writing-card-title">Food</div>
+                <div class="writing-card-desc">Recipes, coffee, and culinary adventures</div>
+            </a>
+        </div>
     </div>
 
     <footer><p>&copy; 2026 Liam Todd. All rights reserved.</p></footer>
 
     <script>
-        async function loadPosts() {
-            var list = document.getElementById('post-list');
-            try {
-                var res = await fetch('/.netlify/functions/get-posts?category=finance');
-                var posts = await res.json();
-
-                if (posts.length === 0) {
-                    list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
-                    return;
-                }
-
-                list.innerHTML = posts.map(function(post) {
-                    var d = new Date(post.date);
-                    var dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-                    return '<li class="post-item">' +
-                        '<div class="post-date">' + dateStr + '</div>' +
-                        '<div class="post-title"><a href="post.html?folder=finance&slug=' + post.file.replace('.html','') + '">' + post.title + '</a></div>' +
-                        '<div class="post-excerpt">' + post.excerpt + '</div>' +
-                    '</li>';
-                }).join('');
-
-            } catch(e) {
-                list.innerHTML = '<li style="color:#999; font-size:15px;">No posts yet. Check back soon.</li>';
-            }
-        }
-
         function toggleTheme() {
             var body = document.body;
             var icon = document.getElementById('theme-icon');
@@ -182,7 +202,6 @@
                 document.body.classList.add('dark-mode');
                 document.getElementById('theme-icon').textContent = '🌙';
             }
-            loadPosts();
         });
     </script>
 </body>
